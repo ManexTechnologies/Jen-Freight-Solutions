@@ -46,6 +46,40 @@ if (navToggle && navLinks) {
   });
 }
 
+// ---------- Social Media Dropdown ----------
+const socialsToggle = document.querySelector('.socials-toggle');
+const navSocials = document.querySelector('.nav-socials');
+
+if (socialsToggle && navSocials) {
+  socialsToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = navSocials.classList.toggle('open');
+    socialsToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!navSocials.contains(e.target)) {
+      navSocials.classList.remove('open');
+      socialsToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      navSocials.classList.remove('open');
+      socialsToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+// ---------- Active Nav Link Highlighting ----------
+const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+document.querySelectorAll('.nav-links > a').forEach((link) => {
+  if (link.getAttribute('href') === currentFile) {
+    link.classList.add('active');
+  }
+});
+
 // ---------- Vehicle Filtering ----------
 const filterButtons = Array.from(document.querySelectorAll('.filter-chip'));
 const vehicleCards = Array.from(document.querySelectorAll('.vehicle-card'));
