@@ -58,7 +58,8 @@ if (filterButtons.length && vehicleCards.length) {
       filterButtons.forEach((chip) => chip.classList.toggle('active', chip === button));
 
       vehicleCards.forEach((card) => {
-        const matches = filter === 'all' || card.dataset.category === filter;
+        const categories = (card.dataset.category || '').split(' ').map((c) => c.trim());
+        const matches = filter === 'all' || categories.includes(filter);
         card.style.display = matches ? 'block' : 'none';
       });
     });
