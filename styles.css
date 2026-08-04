@@ -917,6 +917,57 @@ img {
   font-weight: 600;
 }
 
+/* ---------- Contact social media section ---------- */
+.contact-socials {
+  padding: 1.6rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5));
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contact-socials:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 45px rgba(10, 43, 102, 0.2);
+}
+
+.contact-socials-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.contact-socials-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: rgba(30, 95, 191, 0.08);
+  color: var(--primary-dark);
+  border: 1px solid var(--glass-border-soft);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-socials-list a:hover {
+  background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(30, 95, 191, 0.3);
+}
+
+.contact-socials-list svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 /* ---------- Business card block ---------- */
 .business-card {
   margin-top: 1.2rem;
