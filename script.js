@@ -589,7 +589,7 @@ async function getVehicleInventory() {
 }
 
 async function saveVehicleInventory(items) {
-  if (USE_SUPABASE && supabase) {
+  if (USE_SUPABASE && supabaseClient) {
     const rows = items.map((item) => ({
       id: item.id,
       name: item.name,
