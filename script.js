@@ -323,6 +323,10 @@ function handleLinkClick(e) {
   if (href.endsWith('.html')) {
     // Skip if "download" or target="_blank"
     if (link.hasAttribute('download') || link.target === '_blank') return;
+
+    // The admin page has its own Supabase scripts and auth initialization.
+    if (href.split('#')[0].split('/').pop() === 'admin.html') return;
+
     e.preventDefault();
     e.stopPropagation();
     loadPage(href);
@@ -348,6 +352,118 @@ window.addEventListener('popstate', (e) => {
 
 // ---------- Admin vehicle management ----------
 const ADMIN_STORAGE_KEY = 'jen-freight-vehicle-catalogue';
+const SUPABASE_URL = window.__SUPABASE_URL__ || '';
+const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || '';
+const supabaseClient = window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const USE_SUPABASE = Boolean(
+  window.supabase &&
+    SUPABASE_URL &&
+    SUPABASE_ANON_KEY &&
+    SUPABASE_URL.startsWith('https://')
+);
+
+function setAuthMessage(message, isError = false) {
+  const authMessage = document.getElementById('auth-message');
+  if (!authMessage) return;
+
+  authMessage.textContent = message || '';
+  authMessage.classList.toggle('error', isError);
+}
+
+function setAdminAccess(isAuthenticated) {
+  const authScreen = document.getElementById('admin-auth-screen');
+  const dashboard = document.getElementById('admin-dashboard');
+
+  if (authScreen) {
+    authScreen.classList.toggle('hidden', isAuthenticated);
+  }
+
+  if (dashboard) {
+    dashboard.classList.toggle('hidden', !isAuthenticated);
+  }
+}
+
+async function handleAdminLogin(event) {
+  event.preventDefault();
+
+  const emailInput = document.getElementById('admin-email');
+  const passwordInput = document.getElementById('admin-password');
+  const submitButton = document.getElementById('login-submit');
+
+  if (!emailInput || !passwordInput || !supabaseClient) {
+    setAuthMessage('Supabase is not configured yet. Add your URL and anon key.', true);
+    return;
+  }
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  if (!email || !password) {
+    setAuthMessage('Please enter both email and password.', true);
+    return;
+  }
+
+  submitButton.disabled = true;
+  setAuthMessage('Signing in...');
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    setAuthMessage(error.message || 'Sign in failed.', true);
+    submitButton.disabled = false;
+    return;
+  }
+
+  if (data?.session) {
+    setAuthMessage('Signed in successfully.');
+    setAdminAccess(true);
+    submitButton.disabled = false;
+    document.getElementById('admin-password').value = '';
+    await renderVehicleList();
+  }
+}
+
+async function handleAdminSignOut() {
+  if (!supabaseClient) return;
+
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) {
+    setAuthMessage(error.message || 'Unable to sign out.', true);
+    return;
+  }
+
+  setAdminAccess(false);
+  setAuthMessage('You have been signed out.');
+  document.getElementById('admin-password')?.focus();
+}
+
+async function initializeAdminAuth() {
+  if (!supabaseClient) {
+    setAdminAccess(false);
+    setAuthMessage('Supabase is not configured. Add your project URL and anon key.', true);
+    return;
+  }
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  setAdminAccess(Boolean(session));
+
+  if (!session) {
+    setAuthMessage('Use your Supabase admin account to continue.');
+  }
+
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      setAdminAccess(true);
+      setAuthMessage('Signed in successfully.');
+      renderVehicleList();
+    }
+
+    if (event === 'SIGNED_OUT') {
+      setAdminAccess(false);
+      setAuthMessage('Use your Supabase admin account to continue.');
+    }
+  });
+}
 
 const defaultVehicleInventory = [
   {
@@ -421,7 +537,42 @@ function safeLocalStorageSet(key, value) {
   }
 }
 
-function getVehicleInventory() {
+async function fetchVehiclesFromSupabase() {
+  if (!USE_SUPABASE || !supabaseClient) return null;
+
+  const { data, error } = await supabaseClient.from('vehicles').select('*').order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase fetch error:', error);
+    return null;
+  }
+
+  return data || [];
+}
+
+function normalizeVehicle(vehicle) {
+  return {
+    id: vehicle.id,
+    name: vehicle.name,
+    category: vehicle.category || 'Luxury Sedan',
+    year: Number(vehicle.year) || 2020,
+    price: vehicle.price || '$0',
+    fuel: vehicle.fuel || 'Petrol',
+    transmission: vehicle.transmission || 'Automatic',
+    image: vehicle.image || 'benz c200.jpeg',
+    status: vehicle.status || 'Available',
+    summary: vehicle.summary || ''
+  };
+}
+
+async function getVehicleInventory() {
+  if (USE_SUPABASE && supabaseClient) {
+    const data = await fetchVehiclesFromSupabase();
+    if (Array.isArray(data) && data.length) {
+      return data.map(normalizeVehicle);
+    }
+  }
+
   const stored = localStorage.getItem(ADMIN_STORAGE_KEY);
 
   if (!stored) {
@@ -437,7 +588,29 @@ function getVehicleInventory() {
   }
 }
 
-function saveVehicleInventory(items) {
+async function saveVehicleInventory(items) {
+  if (USE_SUPABASE && supabase) {
+    const rows = items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      category: item.category,
+      year: item.year,
+      price: item.price,
+      fuel: item.fuel,
+      transmission: item.transmission,
+      image: item.image,
+      status: item.status,
+      summary: item.summary,
+      created_at: new Date().toISOString()
+    }));
+
+    const { error } = await supabaseClient.from('vehicles').upsert(rows, { onConflict: 'id' });
+    if (error) {
+      console.error('Supabase save error:', error);
+    }
+    return;
+  }
+
   safeLocalStorageSet(ADMIN_STORAGE_KEY, items);
 }
 
@@ -473,13 +646,14 @@ function updateVehicleStats(items) {
   if (liveEl) liveEl.textContent = available + Math.max(0, total - available - sold);
 }
 
-function renderVehicleList() {
+async function renderVehicleList() {
   const listEl = document.getElementById('vehicle-list');
   if (!listEl) return;
 
+  const inventory = await getVehicleInventory();
   const searchValue = (document.getElementById('vehicle-search')?.value || '').trim().toLowerCase();
   const statusFilter = document.getElementById('status-filter')?.value || 'all';
-  const items = getVehicleInventory().filter((vehicle) => {
+  const items = inventory.filter((vehicle) => {
     const matchesSearch =
       !searchValue ||
       vehicle.name.toLowerCase().includes(searchValue) ||
@@ -490,7 +664,7 @@ function renderVehicleList() {
 
   if (!items.length) {
     listEl.innerHTML = '<div class="empty-state">No vehicles match your current filters.</div>';
-    updateVehicleStats(getVehicleInventory());
+    updateVehicleStats(inventory);
     return;
   }
 
@@ -522,11 +696,11 @@ function renderVehicleList() {
     )
     .join('');
 
-  updateVehicleStats(getVehicleInventory());
+  updateVehicleStats(inventory);
 }
 
-function populateVehicleForm(vehicleId) {
-  const inventory = getVehicleInventory();
+async function populateVehicleForm(vehicleId) {
+  const inventory = await getVehicleInventory();
   const vehicle = inventory.find((item) => item.id === vehicleId);
   if (!vehicle) return;
 
@@ -538,6 +712,7 @@ function populateVehicleForm(vehicleId) {
   document.getElementById('vehicle-fuel').value = vehicle.fuel;
   document.getElementById('vehicle-transmission').value = vehicle.transmission;
   document.getElementById('vehicle-image').value = vehicle.image;
+  updateImagePreview(vehicle.image);
   document.getElementById('vehicle-status').value = vehicle.status;
   document.getElementById('vehicle-summary').value = vehicle.summary;
   document.getElementById('form-title').textContent = 'Edit vehicle';
@@ -548,11 +723,72 @@ function populateVehicleForm(vehicleId) {
   }
 }
 
-function handleVehicleSubmit(event) {
+function compressImage(file, maxWidth = 1200, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height, 1);
+        canvas.width = Math.max(1, Math.round(img.width * ratio));
+        canvas.height = Math.max(1, Math.round(img.height * ratio));
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function updateImagePreview(imageSrc) {
+  const previewEl = document.getElementById('vehicle-image-preview');
+  if (!previewEl) return;
+
+  if (!imageSrc) {
+    previewEl.classList.add('empty');
+    previewEl.innerHTML = '<span>No image selected</span>';
+    return;
+  }
+
+  previewEl.classList.remove('empty');
+  previewEl.innerHTML = `<img src="${imageSrc}" alt="Vehicle preview" />`;
+}
+
+function handleLocalImageUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  compressImage(file)
+    .then((compressedDataUrl) => {
+      const imageField = document.getElementById('vehicle-image');
+      if (imageField) {
+        imageField.value = compressedDataUrl;
+      }
+      updateImagePreview(compressedDataUrl);
+    })
+    .catch(() => {
+      const imageField = document.getElementById('vehicle-image');
+      if (imageField) {
+        imageField.value = '';
+      }
+      updateImagePreview('');
+    });
+}
+
+async function handleVehicleSubmit(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
   const id = document.getElementById('vehicle-id').value;
+  const imageValue = document.getElementById('vehicle-image').value.trim();
   const data = {
     id: id || `vehicle-${Date.now()}`,
     name: document.getElementById('vehicle-name').value.trim(),
@@ -561,14 +797,14 @@ function handleVehicleSubmit(event) {
     price: document.getElementById('vehicle-price').value.trim(),
     fuel: document.getElementById('vehicle-fuel').value,
     transmission: document.getElementById('vehicle-transmission').value,
-    image: document.getElementById('vehicle-image').value.trim() || 'benz c200.jpeg',
+    image: imageValue || 'benz c200.jpeg',
     status: document.getElementById('vehicle-status').value,
     summary: document.getElementById('vehicle-summary').value.trim()
   };
 
   if (!data.name || !data.price || !data.summary) return;
 
-  const inventory = getVehicleInventory();
+  const inventory = await getVehicleInventory();
   const existingIndex = inventory.findIndex((item) => item.id === data.id);
 
   if (existingIndex >= 0) {
@@ -577,28 +813,28 @@ function handleVehicleSubmit(event) {
     inventory.unshift(data);
   }
 
-  saveVehicleInventory(inventory);
+  await saveVehicleInventory(inventory);
   fillDefaultVehicleForm();
-  renderVehicleList();
+  await renderVehicleList();
   form.reset();
 }
 
-function handleVehicleListClick(event) {
+async function handleVehicleListClick(event) {
   const actionButton = event.target.closest('[data-action]');
   if (!actionButton) return;
 
   const { action, id } = actionButton.dataset;
-  const inventory = getVehicleInventory();
+  const inventory = await getVehicleInventory();
 
   if (action === 'edit') {
-    populateVehicleForm(id);
+    await populateVehicleForm(id);
     return;
   }
 
   if (action === 'delete') {
     const nextInventory = inventory.filter((item) => item.id !== id);
-    saveVehicleInventory(nextInventory);
-    renderVehicleList();
+    await saveVehicleInventory(nextInventory);
+    await renderVehicleList();
 
     if (document.getElementById('vehicle-id').value === id) {
       fillDefaultVehicleForm();
@@ -613,6 +849,8 @@ function initVehicleAdmin() {
   const addButton = document.getElementById('add-new-vehicle');
   const resetButton = document.getElementById('reset-form');
   const cancelButton = document.getElementById('cancel-edit');
+  const signOutButton = document.getElementById('admin-signout');
+  const imageUploadInput = document.getElementById('vehicle-image-file');
   const list = document.getElementById('vehicle-list');
 
   if (!form || !list) return;
@@ -621,8 +859,19 @@ function initVehicleAdmin() {
     fillDefaultVehicleForm();
   }
 
+  const initialImage = document.getElementById('vehicle-image')?.value || '';
+  updateImagePreview(initialImage);
+
   form.addEventListener('submit', handleVehicleSubmit);
   list.addEventListener('click', handleVehicleListClick);
+
+  if (signOutButton) {
+    signOutButton.addEventListener('click', handleAdminSignOut);
+  }
+
+  if (imageUploadInput) {
+    imageUploadInput.addEventListener('change', handleLocalImageUpload);
+  }
 
   if (searchInput) {
     searchInput.addEventListener('input', renderVehicleList);
@@ -659,6 +908,13 @@ function initVehicleAdmin() {
 initPageHeader();
 document.addEventListener('DOMContentLoaded', () => {
   setActiveNav(window.location.pathname);
+
+  const loginForm = document.getElementById('admin-login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleAdminLogin);
+  }
+
+  initializeAdminAuth();
   initVehicleAdmin();
   runPageInitializers(window.location.hash.slice(1));
 });
