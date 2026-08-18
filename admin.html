@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Jen Freight Solutions</title>
+    <meta
+      name="description"
+      content="Administrative dashboard for managing vehicle listings, updates, and pricing for Jen Freight Solutions."
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="logo.png" />
+  </head>
+  <body class="admin-page">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div class="bg-blobs" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="blob blob-3"></span>
+    </div>
+
+    <header class="site-header">
+      <nav class="nav container" aria-label="Primary navigation">
+        <a class="brand" href="index.html">
+          <img class="brand-logo" src="logo.png" alt="Jen Freight Solutions logo" />
+          <span class="brand-text">
+            <strong><span class="brand-jen">Jen</span> <span class="brand-freight">Freight</span></strong>
+            <small>Solutions</small>
+          </span>
+        </a>
+
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="services.html">Services</a>
+          <a href="vehicles.html">Vehicle Imports</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="admin.html" class="active">Admin</a>
+        </div>
+
+        <div class="nav-right">
+          <div class="nav-socials">
+            <button class="socials-toggle" aria-expanded="false" aria-label="Open social media links">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </button>
+            <div class="socials-menu">
+              <a href="https://www.tiktok.com/@beitbridge_fastreliable_?_r=1&_t=ZS-98bG6VPq3I9" target="_blank" rel="noopener">TikTok</a>
+              <a href="https://x.com/shakamangondo?s=11" target="_blank" rel="noopener">X</a>
+              <a href="https://www.facebook.com/share/1bynubMbKa/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a>
+              <a href="https://wa.me/263772983508" target="_blank" rel="noopener">WhatsApp</a>
+            </div>
+          </div>
+          <button class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main" class="admin-shell">
+      <section class="container admin-topbar reveal">
+        <div>
+          <span class="pill">Operations dashboard</span>
+          <h1>Vehicle catalogue management</h1>
+        </div>
+        <button class="btn btn-primary" type="button" id="add-new-vehicle">Add new vehicle</button>
+      </section>
+
+      <section class="container admin-stats reveal" aria-label="Dashboard statistics">
+        <article class="card stat-card">
+          <span class="stat-label">Total vehicles</span>
+          <strong id="total-vehicles">0</strong>
+        </article>
+        <article class="card stat-card">
+          <span class="stat-label">Available</span>
+          <strong id="available-vehicles">0</strong>
+        </article>
+        <article class="card stat-card">
+          <span class="stat-label">Sold / pending</span>
+          <strong id="sold-vehicles">0</strong>
+        </article>
+        <article class="card stat-card accent-card">
+          <span class="stat-label">Live listings</span>
+          <strong id="live-listings">0</strong>
+        </article>
+      </section>
+
+      <section class="container admin-grid">
+        <aside class="card admin-panel reveal">
+          <div class="panel-header">
+            <div>
+              <span class="panel-kicker">Catalogue editor</span>
+              <h2 id="form-title">Add new vehicle</h2>
+            </div>
+            <button class="chip-button" type="button" id="reset-form">Reset</button>
+          </div>
+
+          <form id="vehicle-form" class="admin-form">
+            <input type="hidden" id="vehicle-id" />
+
+            <div class="field-grid">
+              <label>
+                <span>Vehicle name</span>
+                <input type="text" id="vehicle-name" name="vehicle-name" placeholder="Mercedes-Benz C200" required />
+              </label>
+
+              <label>
+                <span>Category</span>
+                <select id="vehicle-category" name="vehicle-category">
+                  <option value="Luxury Sedan">Luxury Sedan</option>
+                  <option value="SUV">SUV</option>
+                  <option value="Sedan">Sedan</option>
+                  <option value="Hatchback">Hatchback</option>
+                  <option value="Van / MPV">Van / MPV</option>
+                  <option value="Truck / Pickup">Truck / Pickup</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="field-grid two-up">
+              <label>
+                <span>Year</span>
+                <input type="number" id="vehicle-year" name="vehicle-year" min="2000" max="2035" value="2020" required />
+              </label>
+
+              <label>
+                <span>Price</span>
+                <input type="text" id="vehicle-price" name="vehicle-price" placeholder="$18,500" required />
+              </label>
+            </div>
+
+            <div class="field-grid two-up">
+              <label>
+                <span>Fuel</span>
+                <select id="vehicle-fuel" name="vehicle-fuel">
+                  <option value="Petrol">Petrol</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="Hybrid">Hybrid</option>
+                  <option value="Electric">Electric</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Transmission</span>
+                <select id="vehicle-transmission" name="vehicle-transmission">
+                  <option value="Automatic">Automatic</option>
+                  <option value="Manual">Manual</option>
+                  <option value="CVT">CVT</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              <span>Image filename</span>
+              <input type="text" id="vehicle-image" name="vehicle-image" placeholder="benz c200.jpeg" required />
+            </label>
+
+            <label>
+              <span>Status</span>
+              <select id="vehicle-status" name="vehicle-status">
+                <option value="Available">Available</option>
+                <option value="Sold">Sold</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Short description</span>
+              <textarea id="vehicle-summary" name="vehicle-summary" rows="4" placeholder="Briefly describe the vehicle condition and features." required></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit">Save vehicle</button>
+              <button class="btn btn-secondary" type="button" id="cancel-edit">Cancel</button>
+            </div>
+          </form>
+        </aside>
+
+        <div class="card admin-panel admin-list-panel reveal">
+          <div class="panel-header panel-header-stack">
+            <div>
+              <span class="panel-kicker">Current inventory</span>
+              <h2>Existing vehicles</h2>
+            </div>
+            <div class="list-tools">
+              <label class="search-field" aria-label="Search vehicles">
+                <span class="sr-only">Search</span>
+                <input type="search" id="vehicle-search" placeholder="Search by name or category" />
+              </label>
+              <select id="status-filter" aria-label="Filter by status">
+                <option value="all">All statuses</option>
+                <option value="Available">Available</option>
+                <option value="Sold">Sold</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="vehicle-list" class="vehicle-list" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
