@@ -273,6 +273,11 @@ async function loadPage(url, pushState = true) {
   const hash = normalized.includes('#') ? normalized.split('#')[1] : null;
   const fullUrl = filePath + (hash ? '#' + hash : '');
 
+  if (window.location.protocol === 'file:') {
+    window.location.href = url;
+    return;
+  }
+
   showLoader();
   try {
     const response = await fetch(filePath);
@@ -324,6 +329,10 @@ function handleLinkClick(e) {
   if (href.endsWith('.html')) {
     // Skip if "download" or target="_blank"
     if (link.hasAttribute('download') || link.target === '_blank') return;
+
+    // Local file pages cannot be fetched into one another because file://
+    // documents are treated as separate security origins by the browser.
+    if (window.location.protocol === 'file:') return;
 
     // The admin page has its own Supabase scripts and auth initialization.
     if (href.split('#')[0].split('/').pop() === 'admin.html') return;
