@@ -707,9 +707,9 @@ async function getVehicleInventory() {
     const data = await fetchVehiclesFromSupabase();
     if (Array.isArray(data) && data.length) {
       const remoteItems = data.map(normalizeVehicle);
-      const remoteIds = new Set(remoteItems.map((item) => item.id));
-      const localOnlyItems = localItems.filter((item) => !remoteIds.has(item.id));
-      return [...remoteItems, ...localOnlyItems];
+      const localIds = new Set(localItems.map((item) => item.id));
+      const remoteOnlyItems = remoteItems.filter((item) => !localIds.has(item.id));
+      return [...localItems, ...remoteOnlyItems];
     }
   }
 
@@ -944,6 +944,16 @@ async function handleVehicleSubmit(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
+  if (form.dataset.saving === 'true') return;
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalSubmitText = submitButton ? submitButton.textContent : '';
+  form.dataset.saving = 'true';
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Saving...';
+  }
+
   const id = document.getElementById('vehicle-id').value;
   const imageValue = document.getElementById('vehicle-image').value.trim();
   const data = {
@@ -959,21 +969,29 @@ async function handleVehicleSubmit(event) {
     summary: document.getElementById('vehicle-summary').value.trim()
   };
 
-  if (!data.name || !data.price || !data.summary) return;
+  try {
+    if (!data.name || !data.price || !data.summary) return;
 
-  const inventory = await getVehicleInventory();
-  const existingIndex = inventory.findIndex((item) => item.id === data.id);
+    const inventory = await getVehicleInventory();
+    const existingIndex = inventory.findIndex((item) => item.id === data.id);
 
-  if (existingIndex >= 0) {
-    inventory[existingIndex] = data;
-  } else {
-    inventory.unshift(data);
+    if (existingIndex >= 0) {
+      inventory[existingIndex] = data;
+    } else {
+      inventory.unshift(data);
+    }
+
+    await saveVehicleInventory(inventory);
+    fillDefaultVehicleForm();
+    await renderVehicleList();
+    form.reset();
+  } finally {
+    form.dataset.saving = 'false';
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalSubmitText;
+    }
   }
-
-  await saveVehicleInventory(inventory);
-  fillDefaultVehicleForm();
-  await renderVehicleList();
-  form.reset();
 }
 
 async function handleVehicleListClick(event) {

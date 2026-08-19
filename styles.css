@@ -2170,6 +2170,118 @@ main.page-fade-in {
   }
 }
 
+/* Admin phone layout: keep form controls and inventory rows stable. */
+@media (max-width: 767px) {
+  body.admin-page {
+    overflow-x: hidden;
+  }
+
+  .admin-shell {
+    width: 100%;
+    padding-inline: 0.75rem;
+  }
+
+  .admin-topbar,
+  .admin-stats,
+  .admin-grid {
+    width: 100%;
+  }
+
+  .admin-topbar {
+    padding-inline: 0.25rem;
+  }
+
+  .admin-topbar h1 {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-panel {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .admin-form,
+  .field-grid,
+  .two-up {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .admin-form input,
+  .admin-form select,
+  .admin-form textarea,
+  .upload-box input[type="file"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .form-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin-inline: -0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.94);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .form-actions .btn {
+    min-height: 46px;
+  }
+
+  .vehicle-list {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .vehicle-list-item {
+    grid-template-columns: 64px minmax(0, 1fr);
+    align-items: start;
+    min-width: 0;
+  }
+
+  .vehicle-item-top {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .vehicle-item-main h3 {
+    overflow-wrap: anywhere;
+  }
+
+  .vehicle-item-meta {
+    min-width: 0;
+  }
+
+  .vehicle-item-meta span {
+    max-width: 100%;
+  }
+
+  .vehicle-item-actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .vehicle-item-actions button {
+    min-height: 42px;
+  }
+
+  .list-tools,
+  .search-field,
+  .list-tools select {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
 /* Large tablets and small desktops (900px and up) */
 @media (min-width: 901px) {
   .admin-shell {
