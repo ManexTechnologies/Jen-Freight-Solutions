@@ -691,8 +691,14 @@ async function getVehicleInventory() {
 
   try {
     const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) && parsed.length ? parsed : [...defaultVehicleInventory];
+    if (Array.isArray(parsed) && parsed.length) {
+      return parsed.map(normalizeVehicle);
+    }
+
+    safeLocalStorageSet(ADMIN_STORAGE_KEY, defaultVehicleInventory);
+    return [...defaultVehicleInventory];
   } catch (err) {
+    safeLocalStorageSet(ADMIN_STORAGE_KEY, defaultVehicleInventory);
     return [...defaultVehicleInventory];
   }
 }
