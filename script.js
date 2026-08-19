@@ -722,6 +722,7 @@ async function saveVehicleInventory(items) {
     const { error } = await supabaseClient.from('vehicles').upsert(rows, { onConflict: 'id' });
     if (error) {
       console.error('Supabase save error:', error);
+      safeLocalStorageSet(ADMIN_STORAGE_KEY, items);
     }
     return;
   }
