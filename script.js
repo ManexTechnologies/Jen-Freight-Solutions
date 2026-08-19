@@ -429,6 +429,7 @@ async function handleAdminLogin(event) {
     setAdminAccess(true);
     submitButton.disabled = false;
     document.getElementById('admin-password').value = '';
+    await syncLocalInventoryToSupabase();
     await renderVehicleList();
   }
 }
@@ -457,6 +458,11 @@ async function initializeAdminAuth() {
   const { data: { session } } = await supabaseClient.auth.getSession();
   setAdminAccess(Boolean(session));
 
+  if (session) {
+    await syncLocalInventoryToSupabase();
+    await renderVehicleList();
+  }
+
   if (!session) {
     setAuthMessage('');
   }
@@ -465,7 +471,7 @@ async function initializeAdminAuth() {
     if (event === 'SIGNED_IN' && session) {
       setAdminAccess(true);
       setAuthMessage('');
-      renderVehicleList();
+      syncLocalInventoryToSupabase().then(renderVehicleList);
     }
 
     if (event === 'SIGNED_OUT') {
@@ -759,6 +765,22 @@ async function saveVehicleInventory(items) {
       console.error('Supabase save error:', error);
     }
     return;
+  }
+}
+
+async function syncLocalInventoryToSupabase() {
+  if (!USE_SUPABASE || !supabaseClient) return;
+
+  const stored = localStorage.getItem(ADMIN_STORAGE_KEY);
+  if (!stored) return;
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (Array.isArray(parsed) && parsed.length) {
+      await saveVehicleInventory(parsed.map(normalizeVehicle));
+    }
+  } catch (err) {
+    console.error('Local inventory sync error:', err);
   }
 }
 
