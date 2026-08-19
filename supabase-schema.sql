@@ -25,6 +25,9 @@ create index if not exists idx_vehicles_category
 -- Enable Row Level Security (recommended for production)
 alter table public.vehicles enable row level security;
 
+-- Enable live vehicle updates for admin and public pages.
+alter publication supabase_realtime add table public.vehicles;
+
 -- Allow public read access if the catalogue should be visible to everyone
 create policy "Vehicles are viewable by everyone"
   on public.vehicles

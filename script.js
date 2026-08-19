@@ -371,6 +371,53 @@ const USE_SUPABASE = Boolean(
     SUPABASE_ANON_KEY &&
     SUPABASE_URL.startsWith('https://')
 );
+let vehicleRealtimeChannel = null;
+
+async function refreshVehicleViewsFromRealtime() {
+  if (!supabaseClient) return;
+
+  const remoteItems = await fetchVehiclesFromSupabase();
+  if (!Array.isArray(remoteItems)) return;
+
+  const stored = localStorage.getItem(ADMIN_STORAGE_KEY);
+  let localItems = [];
+  try {
+    const parsed = stored ? JSON.parse(stored) : [];
+    if (Array.isArray(parsed)) localItems = parsed.map(normalizeVehicle);
+  } catch (err) {
+    localItems = [];
+  }
+
+  const normalizedRemoteItems = remoteItems.map(normalizeVehicle);
+  const remoteIds = new Set(normalizedRemoteItems.map((item) => item.id));
+  const localOnlyItems = localItems.filter((item) => !remoteIds.has(item.id));
+  const mergedItems = [...normalizedRemoteItems, ...localOnlyItems];
+  safeLocalStorageSet(ADMIN_STORAGE_KEY, mergedItems);
+
+  if (document.querySelector('.vehicle-grid')) {
+    await renderPublicVehicleCards();
+  }
+  if (document.getElementById('vehicle-list')) {
+    await renderVehicleList();
+  }
+}
+
+function initializeVehicleRealtime() {
+  if (!USE_SUPABASE || !supabaseClient || vehicleRealtimeChannel) return;
+
+  vehicleRealtimeChannel = supabaseClient
+    .channel('vehicle-catalogue-realtime')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'vehicles' },
+      () => refreshVehicleViewsFromRealtime()
+    )
+    .subscribe((status) => {
+      if (status === 'CHANNEL_ERROR') {
+        console.error('Vehicle realtime subscription failed. Check Supabase realtime publication and policies.');
+      }
+    });
+}
 
 function setAuthMessage(message, isError = false) {
   const authMessage = document.getElementById('auth-message');
@@ -777,7 +824,23 @@ async function syncLocalInventoryToSupabase() {
   try {
     const parsed = JSON.parse(stored);
     if (Array.isArray(parsed) && parsed.length) {
-      await saveVehicleInventory(parsed.map(normalizeVehicle));
+      const rows = parsed.map(normalizeVehicle).map((item) => ({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        year: item.year,
+        price: item.price,
+        fuel: item.fuel,
+        transmission: item.transmission,
+        image: item.image,
+        status: item.status,
+        summary: item.summary
+      }));
+
+      const { error } = await supabaseClient.from('vehicles').upsert(rows, { onConflict: 'id' });
+      if (error) {
+        console.error('Local inventory sync error:', error);
+      }
     }
   } catch (err) {
     console.error('Local inventory sync error:', err);
@@ -1165,5 +1228,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initializeAdminAuth();
   initVehicleAdmin();
+  initializeVehicleRealtime();
   runPageInitializers(window.location.hash.slice(1));
 });
