@@ -716,6 +716,18 @@ img {
   margin: 0 0 0.9rem;
 }
 
+.vehicle-price {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(30, 95, 191, 0.12), rgba(242, 185, 75, 0.12));
+  border: 1px solid rgba(30, 95, 191, 0.2);
+  border-radius: 0.7rem;
+  padding: 0.6rem 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary-deep);
+  margin-bottom: 0.8rem;
+}
+
 .vehicle-specs {
   list-style: none;
   margin: 0 0 0.6rem;
@@ -1210,7 +1222,7 @@ main.page-fade-in {
 .admin-stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 1.25rem;
   margin-bottom: 1.5rem;
 }
 
@@ -1239,6 +1251,78 @@ main.page-fade-in {
 .stat-card strong {
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   color: var(--primary-deep);
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.stat-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--primary-deep);
+  opacity: 0.6;
+}
+
+.stat-number {
+  display: block;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--primary-deep);
+  margin-bottom: 0.25rem;
+}
+
+.stat-number-group {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-percent {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(30, 95, 191, 0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.4rem;
+}
+
+.stat-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.stat-card-success {
+  border-left: 4px solid #22c55e;
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.stat-card-success .stat-icon {
+  color: #22c55e;
+}
+
+.stat-card-success .stat-number,
+.stat-card-success .stat-percent {
+  color: #16a34a;
+}
+
+.stat-card-warning {
+  border-left: 4px solid #f59e0b;
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.stat-card-warning .stat-icon {
+  color: #f59e0b;
+}
+
+.stat-card-warning .stat-number {
+  color: #d97706;
 }
 
 .admin-grid {

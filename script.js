@@ -742,16 +742,25 @@ function updateVehicleStats(items) {
   const total = items.length;
   const available = items.filter((item) => item.status === 'Available').length;
   const sold = items.filter((item) => item.status === 'Sold').length;
+  const pending = items.filter((item) => item.status === 'Pending').length;
+  const live = available + pending;
+  const availablePercent = total > 0 ? Math.round((available / total) * 100) : 0;
 
   const totalEl = document.getElementById('total-vehicles');
   const availableEl = document.getElementById('available-vehicles');
   const soldEl = document.getElementById('sold-vehicles');
   const liveEl = document.getElementById('live-listings');
+  const availablePercentElem = document.getElementById('available-percent');
+  const soldCountEl = document.getElementById('sold-count');
+  const pendingCountEl = document.getElementById('pending-count');
 
   if (totalEl) totalEl.textContent = total;
   if (availableEl) availableEl.textContent = available;
-  if (soldEl) soldEl.textContent = sold;
-  if (liveEl) liveEl.textContent = available + Math.max(0, total - available - sold);
+  if (soldEl) soldEl.textContent = sold + pending;
+  if (liveEl) liveEl.textContent = live;
+  if (availablePercentElem) availablePercentElem.textContent = availablePercent + '%';
+  if (soldCountEl) soldCountEl.textContent = sold;
+  if (pendingCountEl) pendingCountEl.textContent = pending;
 }
 
 async function renderVehicleList() {

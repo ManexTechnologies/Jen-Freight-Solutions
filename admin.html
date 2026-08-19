@@ -98,20 +98,44 @@
 
         <section class="container admin-stats reveal" aria-label="Dashboard statistics">
           <article class="card stat-card">
-            <span class="stat-label">Total vehicles</span>
-            <strong id="total-vehicles">0</strong>
+            <div class="stat-header">
+              <span class="stat-label">Total Inventory</span>
+              <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H4V4h14v10z"/></svg>
+            </div>
+            <strong id="total-vehicles" class="stat-number">0</strong>
+            <p class="stat-desc">All vehicles</p>
           </article>
-          <article class="card stat-card">
-            <span class="stat-label">Available</span>
-            <strong id="available-vehicles">0</strong>
+
+          <article class="card stat-card stat-card-success">
+            <div class="stat-header">
+              <span class="stat-label">Available Now</span>
+              <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>
+            </div>
+            <div class="stat-number-group">
+              <strong id="available-vehicles" class="stat-number">0</strong>
+              <span class="stat-percent" id="available-percent">0%</span>
+            </div>
+            <p class="stat-desc">Ready for sale</p>
           </article>
-          <article class="card stat-card">
-            <span class="stat-label">Sold / pending</span>
-            <strong id="sold-vehicles">0</strong>
+
+          <article class="card stat-card stat-card-warning">
+            <div class="stat-header">
+              <span class="stat-label">Sold / Pending</span>
+              <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 5H5v14h14V5zM9 17H7v-7h2V17zm4 0h-2V7h2V17zm4 0h-2v-4h2V17z"/></svg>
+            </div>
+            <div class="stat-number-group">
+              <strong id="sold-vehicles" class="stat-number">0</strong>
+            </div>
+            <p class="stat-desc"><span id="sold-count">0</span> sold, <span id="pending-count">0</span> pending</p>
           </article>
+
           <article class="card stat-card accent-card">
-            <span class="stat-label">Live listings</span>
-            <strong id="live-listings">0</strong>
+            <div class="stat-header">
+              <span class="stat-label">Live Listings</span>
+              <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <strong id="live-listings" class="stat-number">0</strong>
+            <p class="stat-desc">Available + Pending</p>
           </article>
         </section>
 
@@ -243,6 +267,50 @@
         </section>
       </div>
     </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="footer-brand" href="index.html">
+            <img class="brand-logo" src="logo.png" alt="Jen Freight Solutions logo" />
+            <span class="brand-text">
+              <strong><span class="brand-jen">Jen</span> <span class="brand-freight">Freight</span></strong>
+              <small>Solutions</small>
+            </span>
+          </a>
+          <p>Efficient import support and freight solutions delivered with clarity and care.</p>
+          <div class="footer-socials" aria-label="Social media links">
+            <a href="https://www.tiktok.com/@beitbridge_fastreliable_?_r=1&_t=ZS-98bG6VPq3I9" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg></a>
+            <a href="https://x.com/shakamangondo?s=11" target="_blank" rel="noopener" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="https://www.facebook.com/share/1bynubMbKa/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+            <a href="https://youtube.com/@jenfreightsolutions8167?si=duzUh7j8se_IzVG4" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+            <a href="https://wa.me/263772983508" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Quick links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="vehicles.html">Vehicle Imports</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Contact</h3>
+          <ul>
+            <li><a href="mailto:info@jenfreight.co.zw">info@jenfreight.co.zw</a></li>
+            <li><a href="tel:+263772983508">+263 772 983 508</a></li>
+            <li>1958A Elliot Office Park, Beitbridge</li>
+          </ul>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span>Jen Freight Solutions © 2026. All rights reserved.</span>
+        <a href="contact.html">Get in touch</a>
+      </div>
+    </footer>
 
     <script>
       window.__SUPABASE_URL__ = "https://jpmtjlalnmptnkfqmmqo.supabase.co";
