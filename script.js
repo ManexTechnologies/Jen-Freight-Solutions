@@ -195,6 +195,7 @@ function initCounters() {
 // Run all content initializers (called after every page load / swap)
 function runPageInitializers(hash) {
   initSlider();
+  renderPublicVehicleCards();
   initVehicleFilters();
   initReveal();
   initCounters();
@@ -1018,6 +1019,60 @@ function initVehicleAdmin() {
   }
 
   renderVehicleList();
+}
+
+async function renderPublicVehicleCards() {
+  const gridEl = document.querySelector('.vehicle-grid');
+  if (!gridEl) return;
+
+  const inventory = await getVehicleInventory();
+  if (!inventory || !inventory.length) return;
+
+  const categoryMap = {
+    'Luxury Sedan': 'luxury sedan',
+    'SUV': 'suv luxury',
+    'Van / MPV': 'van-mpv',
+    'Sedan': 'sedan',
+    'Hatchback': 'hatchback',
+    'Truck / Pickup': 'truck-pickup'
+  };
+
+  gridEl.innerHTML = inventory
+    .map((vehicle) => {
+      const category = categoryMap[vehicle.category] || vehicle.category.toLowerCase();
+      const statusClass = vehicle.status === 'Available' ? 'Available' : vehicle.status === 'Sold' ? 'Unavailable' : 'Pending';
+      const badgeText = vehicle.category.includes('SUV') || vehicle.category.includes('Luxury') ? 'Luxury' :
+                       vehicle.category.includes('Hatchback') ? 'Economy' :
+                       vehicle.category.includes('Van') ? 'Commercial' :
+                       vehicle.category.includes('Truck') ? 'Commercial' : 'Standard';
+
+      return `
+        <article class="card vehicle-card reveal" data-category="${category}">
+          <div class="vehicle-img-wrap">
+            <div class="vehicle-img">
+              <img src="${vehicle.image}" alt="${vehicle.name}" loading="lazy" />
+            </div>
+            <span class="vehicle-badge">${badgeText}</span>
+          </div>
+          <div class="vehicle-body">
+            <h3>${vehicle.name}</h3>
+            <p>${vehicle.summary}</p>
+            <div class="vehicle-price">${vehicle.price}</div>
+            <ul class="vehicle-specs">
+              <li><span>Engine</span><span>-</span></li>
+              <li><span>Transmission</span><span>${vehicle.transmission}</span></li>
+              <li><span>Fuel</span><span>${vehicle.fuel}</span></li>
+              <li><span>Year</span><span>${vehicle.year}</span></li>
+            </ul>
+            <span class="vehicle-meta">${statusClass} • ${vehicle.category}</span>
+            <a class="vehicle-cta" href="contact.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Enquire about this vehicle</a>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+
+  initVehicleFilters();
 }
 
 // ---------- Initial load ----------
