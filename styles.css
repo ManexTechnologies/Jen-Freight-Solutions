@@ -1759,4 +1759,155 @@ main.page-fade-in {
     flex-direction: row;
     justify-content: flex-start;
   }
+
+  .admin-panel {
+    padding: 1rem;
+  }
+
+  .admin-header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .admin-header-actions .btn {
+    width: 100%;
+  }
+
+  .two-up {
+    grid-template-columns: 1fr !important;
+  }
+
+  .list-tools {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-field {
+    min-width: 100%;
+  }
+
+  .list-tools select {
+    width: 100%;
+  }
+
+  .panel-header-stack {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-topbar {
+    gap: 0.5rem;
+  }
+
+  .admin-topbar h1 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .admin-stats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 0.9rem 1rem;
+  }
+
+  .stat-card strong {
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  }
+
+  .admin-form {
+    gap: 0.8rem;
+  }
+
+  .admin-form input,
+  .admin-form select,
+  .admin-form textarea {
+    padding: 0.7rem 0.8rem;
+    font-size: 16px;
+  }
+
+  .admin-form textarea {
+    min-height: 100px;
+  }
+
+  .image-preview {
+    min-height: 100px;
+  }
+
+  .vehicle-list-item {
+    grid-template-columns: 80px 1fr;
+    gap: 0.75rem;
+    padding: 0.7rem;
+  }
+
+  .vehicle-thumb {
+    width: 80px;
+    height: 60px;
+  }
+
+  .vehicle-item-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vehicle-item-main h3 {
+    font-size: 0.95rem;
+  }
+
+  .vehicle-item-meta {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+  }
+
+  .vehicle-item-meta span {
+    display: inline-block;
+  }
+
+  .vehicle-item-actions {
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 0.5rem;
+  }
+
+  .status-badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .auth-card h1 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .admin-login-form {
+    gap: 0.8rem;
+  }
+
+  .admin-login-form input {
+    padding: 0.75rem 0.8rem;
+    font-size: 16px;
+  }
+
+  .panel-kicker {
+    font-size: 0.65rem;
+  }
+
+  .panel-header h2 {
+    font-size: 1.2rem;
+  }
 }

@@ -391,7 +391,7 @@ async function handleAdminLogin(event) {
   const submitButton = document.getElementById('login-submit');
 
   if (!emailInput || !passwordInput || !supabaseClient) {
-    setAuthMessage('Supabase is not configured yet. Add your URL and anon key.', true);
+    setAuthMessage('', true);
     return;
   }
 
@@ -415,7 +415,7 @@ async function handleAdminLogin(event) {
   }
 
   if (data?.session) {
-    setAuthMessage('Signed in successfully.');
+    setAuthMessage('');
     setAdminAccess(true);
     submitButton.disabled = false;
     document.getElementById('admin-password').value = '';
@@ -433,14 +433,14 @@ async function handleAdminSignOut() {
   }
 
   setAdminAccess(false);
-  setAuthMessage('You have been signed out.');
+  setAuthMessage('');
   document.getElementById('admin-password')?.focus();
 }
 
 async function initializeAdminAuth() {
   if (!supabaseClient) {
     setAdminAccess(false);
-    setAuthMessage('Supabase is not configured. Add your project URL and anon key.', true);
+    setAuthMessage('', true);
     return;
   }
 
@@ -448,19 +448,19 @@ async function initializeAdminAuth() {
   setAdminAccess(Boolean(session));
 
   if (!session) {
-    setAuthMessage('Use your Supabase admin account to continue.');
+    setAuthMessage('');
   }
 
   supabaseClient.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) {
       setAdminAccess(true);
-      setAuthMessage('Signed in successfully.');
+      setAuthMessage('');
       renderVehicleList();
     }
 
     if (event === 'SIGNED_OUT') {
       setAdminAccess(false);
-      setAuthMessage('Use your Supabase admin account to continue.');
+      setAuthMessage('');
     }
   });
 }
