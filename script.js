@@ -1120,10 +1120,7 @@ async function renderPublicVehicleCards() {
     .map((vehicle) => {
       const category = categoryMap[vehicle.category] || vehicle.category.toLowerCase();
       const statusClass = vehicle.status === 'Available' ? 'Available' : vehicle.status === 'Sold' ? 'Unavailable' : 'Pending';
-      const badgeText = vehicle.category.includes('SUV') || vehicle.category.includes('Luxury') ? 'Luxury' :
-                       vehicle.category.includes('Hatchback') ? 'Economy' :
-                       vehicle.category.includes('Van') ? 'Commercial' :
-                       vehicle.category.includes('Truck') ? 'Commercial' : 'Standard';
+      const badgeText = vehicle.category;
 
       return `
         <article class="card vehicle-card reveal" data-category="${category}">
