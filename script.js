@@ -684,35 +684,41 @@ function normalizeVehicle(vehicle) {
 }
 
 async function getVehicleInventory() {
+  let localItems = [];
+  const stored = localStorage.getItem(ADMIN_STORAGE_KEY);
+
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length) {
+        localItems = parsed.map(normalizeVehicle);
+      }
+    } catch (err) {
+      localItems = [];
+    }
+  }
+
+  if (!localItems.length) {
+    localItems = [...defaultVehicleInventory];
+    safeLocalStorageSet(ADMIN_STORAGE_KEY, localItems);
+  }
+
   if (USE_SUPABASE && supabaseClient) {
     const data = await fetchVehiclesFromSupabase();
     if (Array.isArray(data) && data.length) {
-      return data.map(normalizeVehicle);
+      const remoteItems = data.map(normalizeVehicle);
+      const remoteIds = new Set(remoteItems.map((item) => item.id));
+      const localOnlyItems = localItems.filter((item) => !remoteIds.has(item.id));
+      return [...remoteItems, ...localOnlyItems];
     }
   }
 
-  const stored = localStorage.getItem(ADMIN_STORAGE_KEY);
-
-  if (!stored) {
-    safeLocalStorageSet(ADMIN_STORAGE_KEY, defaultVehicleInventory);
-    return [...defaultVehicleInventory];
-  }
-
-  try {
-    const parsed = JSON.parse(stored);
-    if (Array.isArray(parsed) && parsed.length) {
-      return parsed.map(normalizeVehicle);
-    }
-
-    safeLocalStorageSet(ADMIN_STORAGE_KEY, defaultVehicleInventory);
-    return [...defaultVehicleInventory];
-  } catch (err) {
-    safeLocalStorageSet(ADMIN_STORAGE_KEY, defaultVehicleInventory);
-    return [...defaultVehicleInventory];
-  }
+  return localItems;
 }
 
 async function saveVehicleInventory(items) {
+  safeLocalStorageSet(ADMIN_STORAGE_KEY, items);
+
   if (USE_SUPABASE && supabaseClient) {
     const rows = items.map((item) => ({
       id: item.id,
@@ -731,12 +737,9 @@ async function saveVehicleInventory(items) {
     const { error } = await supabaseClient.from('vehicles').upsert(rows, { onConflict: 'id' });
     if (error) {
       console.error('Supabase save error:', error);
-      safeLocalStorageSet(ADMIN_STORAGE_KEY, items);
     }
     return;
   }
-
-  safeLocalStorageSet(ADMIN_STORAGE_KEY, items);
 }
 
 function fillDefaultVehicleForm() {
@@ -1089,6 +1092,7 @@ async function renderPublicVehicleCards() {
     .join('');
 
   initVehicleFilters();
+  initReveal();
 }
 
 // ---------- Initial load ----------
