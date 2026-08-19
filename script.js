@@ -525,6 +525,114 @@ const defaultVehicleInventory = [
     image: 'nissan nv350.jpeg',
     status: 'Sold',
     summary: 'Roomy, dependable van ideal for cargo and passenger use.'
+  },
+  {
+    id: 'vehicle-6',
+    name: 'Nissan Serena',
+    category: 'Van / MPV',
+    year: 2015,
+    price: '$13,800',
+    fuel: 'Petrol',
+    transmission: 'CVT',
+    image: 'nissan serena.jpeg',
+    status: 'Available',
+    summary: 'Family-friendly MPV with flexible seating and a smooth ride.'
+  },
+  {
+    id: 'vehicle-7',
+    name: 'Toyota Aqua',
+    category: 'Hatchback',
+    year: 2015,
+    price: '$12,200',
+    fuel: 'Hybrid',
+    transmission: 'CVT',
+    image: 'aqua.jpeg',
+    status: 'Available',
+    summary: 'Compact hybrid hatchback with outstanding fuel economy.'
+  },
+  {
+    id: 'vehicle-8',
+    name: 'Honda Fit GP5',
+    category: 'Hatchback',
+    year: 2014,
+    price: '$11,900',
+    fuel: 'Hybrid',
+    transmission: 'CVT',
+    image: 'honda fit gp5.jpeg',
+    status: 'Available',
+    summary: 'Practical hybrid hatchback known for clever space and efficiency.'
+  },
+  {
+    id: 'vehicle-9',
+    name: 'Toyota Vitz',
+    category: 'Hatchback',
+    year: 2015,
+    price: '$10,500',
+    fuel: 'Petrol',
+    transmission: 'CVT',
+    image: 'vits.jpeg',
+    status: 'Available',
+    summary: 'Light, agile hatchback that is easy on fuel and perfect for the city.'
+  },
+  {
+    id: 'vehicle-10',
+    name: 'Honda Grace',
+    category: 'Sedan',
+    year: 2015,
+    price: '$12,700',
+    fuel: 'Hybrid',
+    transmission: 'CVT',
+    image: 'honda grace.jpeg',
+    status: 'Available',
+    summary: 'Efficient hybrid sedan with a comfortable, well-equipped cabin.'
+  },
+  {
+    id: 'vehicle-11',
+    name: 'Honda Vezel RS Hybrid',
+    category: 'SUV',
+    year: 2015,
+    price: '$14,900',
+    fuel: 'Hybrid',
+    transmission: 'DCT',
+    image: 'vezel rs hybrid.jpeg',
+    status: 'Available',
+    summary: 'Stylish crossover SUV with sporty RS trim and hybrid efficiency.'
+  },
+  {
+    id: 'vehicle-12',
+    name: 'Toyota Probox',
+    category: 'Van / MPV',
+    year: 2015,
+    price: '$11,200',
+    fuel: 'Petrol',
+    transmission: 'Automatic',
+    image: 'probox.jpeg',
+    status: 'Available',
+    summary: 'Compact, durable wagon loved for business use and daily work.'
+  },
+  {
+    id: 'vehicle-13',
+    name: 'Toyota Toyoace Truck',
+    category: 'Truck / Pickup',
+    year: 2015,
+    price: '$16,500',
+    fuel: 'Diesel',
+    transmission: 'Manual',
+    image: 'toyota toyace truck.jpeg',
+    status: 'Available',
+    summary: 'Light commercial truck built for hauling and hard daily work.'
+  },
+  {
+    id: 'vehicle-14',
+    name: 'Hino Truck',
+    category: 'Truck / Pickup',
+    year: 2015,
+    price: '$19,800',
+    fuel: 'Diesel',
+    transmission: 'Manual',
+    image: 'hino truck.jpeg',
+    status: 'Available',
+    summary: 'Workhorse truck engineered for heavy loads and dependable performance.'
   }
 ];
 
