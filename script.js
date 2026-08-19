@@ -720,6 +720,7 @@ async function saveVehicleInventory(items) {
   safeLocalStorageSet(ADMIN_STORAGE_KEY, items);
 
   if (USE_SUPABASE && supabaseClient) {
+    const remoteItems = await fetchVehiclesFromSupabase();
     const rows = items.map((item) => ({
       id: item.id,
       name: item.name,
@@ -733,6 +734,25 @@ async function saveVehicleInventory(items) {
       summary: item.summary,
       created_at: new Date().toISOString()
     }));
+
+    if (Array.isArray(remoteItems)) {
+      const nextIds = new Set(items.map((item) => item.id));
+      const removedIds = remoteItems
+        .map(normalizeVehicle)
+        .filter((item) => !nextIds.has(item.id))
+        .map((item) => item.id);
+
+      if (removedIds.length) {
+        const { error: deleteError } = await supabaseClient
+          .from('vehicles')
+          .delete()
+          .in('id', removedIds);
+
+        if (deleteError) {
+          console.error('Supabase delete error:', deleteError);
+        }
+      }
+    }
 
     const { error } = await supabaseClient.from('vehicles').upsert(rows, { onConflict: 'id' });
     if (error) {
