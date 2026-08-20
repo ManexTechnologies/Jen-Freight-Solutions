@@ -364,7 +364,18 @@ window.addEventListener('popstate', (e) => {
 const ADMIN_STORAGE_KEY = 'jen-freight-vehicle-catalogue';
 const SUPABASE_URL = window.__SUPABASE_URL__ || '';
 const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || '';
-const supabaseClient = window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+// Force every Supabase request to bypass mobile carrier / browser HTTP caches so
+// devices on compressing proxies (common on mobile data) always see the latest vehicles.
+const noCacheFetch = (url, options = {}) =>
+  fetch(url, {
+    ...options,
+    cache: 'no-store',
+    headers: { ...(options.headers || {}), 'Cache-Control': 'no-cache' }
+  });
+const supabaseClient =
+  window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { fetch: noCacheFetch } })
+    : null;
 const USE_SUPABASE = Boolean(
   window.supabase &&
     SUPABASE_URL &&
